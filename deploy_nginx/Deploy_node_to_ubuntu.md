@@ -2,7 +2,7 @@
 
 This is documentation about how you can deploy a node app to a server with nginx whether it is a `vps`, `vds`, `dedicated server`, `aws ec2` instance etc. This assumes your familiar with basic linux commands. This will work for any node app that runs a server be it express app, next.js app, remix app etc.
 
-### Assumptions
+## Assumptions
 
 1. A hosting with full root access and a domain
 2. **OS**: Ubuntu 22.04
@@ -11,15 +11,15 @@ This is documentation about how you can deploy a node app to a server with nginx
 5. **Domain Name**: example.com
 6. Using a Linux terminal on your local computer
 
-### Workflow Steps
+## Workflow Steps
 
 ---
 
-#### 1. Secure Your Server
+### 1. Secure Your Server
 
 ---
 
-##### A. Login to your server
+#### A. Login to your server
 
 1. Open your terminal (bash, zsh etc)
 
@@ -35,7 +35,7 @@ root@vm172048:~$
 
 If so you have Successfully logged in as root user.
 
-##### B. Server Hardening
+#### B. Server Hardening
 
 Now we are inside our machine and we can start installing the necessary packages and software but before that let’s upgrade our system. Enter below command in your terminal:
 
@@ -45,7 +45,7 @@ apt update && apt upgrade -y
 
 Now, all the current packages are installed to latest patch version which keeps the system safe from "unpatched vulnerability exploitation"
 
-##### C. Create Non-Root User
+#### C. Create Non-Root User
 
 ---
 
@@ -91,7 +91,7 @@ You will be prompted for your new password. After giving you will see something 
 admin@vm172048:~$
 ```
 
-##### D. Connect to the server Using SSH
+#### D. Connect to the server Using SSH
 
 ---
 
@@ -118,7 +118,7 @@ sudo nano ~/.ssh/authorized_keys
 
 After all of this you should be able to log in without using password.
 
-##### E. Disable root and password login In the Server
+#### E. Disable root and password login In the Server
 
 ---
 
@@ -154,7 +154,7 @@ ssh -p 1234 admin@172.172.172.172
 
 Also, it should go without saying, but **you need to keep the private key safe** and if you lose it **you will not be able to get in remotely anymore**.
 
-##### E. Firewall Configuration
+#### E. Firewall Configuration
 
 ---
 
@@ -215,7 +215,7 @@ sudo ufw reload
 
 After enabling firewall **never** **exit from your remote server connection** without `enabling` rule for `ssh` connection. Otherwise **you won't be able to log into your own server**.
 
-##### F. Fail2Ban Configuration
+#### F. Fail2Ban Configuration
 
 ---
 
@@ -272,7 +272,7 @@ If you have come so far. Congratulations. You have secured your server. Now it's
 exit
 ```
 
-#### 2. DNS Configuration
+### 2. DNS Configuration
 
 Our website will known by a domain name, in this case `example.com`. To make the domain name point to our server we need to some DNS configuration on the site of our domain provider.
 
@@ -289,9 +289,9 @@ c. Now Update `A` and `AAAA` record for IPv4 & IPv6 Address
 
 d. Next Update the `CNAME` Record to forward `www.example.com` to `example.com`
 
-| Record Type | Host Name | Address    |
-| ----------- | --------- | ---------- |
-| CNAME       | www       | exaple.com |
+| Record Type | Host Name | Address     |
+| ----------- | --------- | ----------- |
+| CNAME       | www       | example.com |
 
 `CNAME` maps a subdomain to another domain name
 
