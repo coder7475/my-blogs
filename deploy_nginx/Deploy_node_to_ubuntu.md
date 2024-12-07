@@ -6,9 +6,10 @@ This is documentation about how you can deploy a node app to a server with nginx
 
 1. A hosting with full root access and a domain
 2. **OS**: Ubuntu 22.04
-3. **IP**: 172.172.172.172
-4. **Domain Name**: example.com
-5. Using a Linux terminal on your local computer
+3. **IPv4**: 172.172.172.172
+4. **IPv6**: 2001:0db8:85a3:0000:0000:8a2e:0370:7334
+5. **Domain Name**: example.com
+6. Using a Linux terminal on your local computer
 
 ### Workflow Steps
 
@@ -34,7 +35,7 @@ root@vm172048:~$
 
 If so you have Successfully logged in as root user.
 
-##### B. First Server Hardening
+##### B. Server Hardening
 
 Now we are inside our machine and we can start installing the necessary packages and software but before that let’s upgrade our system. Enter below command in your terminal:
 
@@ -265,4 +266,33 @@ Now restart the fail2ban service:
 sudo systemctl restart fail2ban
 ```
 
-#### 2. Deploying your WebApp
+If you have come so far. Congratulations. You have secured your server. Now it's ready to deploy your `webApp`. Enter `exit` to end the session.
+
+```
+exit
+```
+
+#### 2. DNS Configuration
+
+Our website will known by a domain name, in this case `example.com`. To make the domain name point to our server we need to some DNS configuration on the site of our domain provider.
+
+a. Login to your domain providers website
+
+b Navigate to `example.com` and then Manage DNS Management
+
+c. Now Update `A` and `AAAA` record for IPv4 & IPv6 Address
+
+| Record Type | Host Name | Address                                 |
+| ----------- | --------- | --------------------------------------- |
+| A           | @         | 172.172.172.172                         |
+| AAAA        | @         | 2001:0db8:85a3:0000:0000:8a2e:0370:7334 |
+
+d. Next Update the `CNAME` Record to forward `www.example.com` to `example.com`
+
+| Record Type | Host Name | Address    |
+| ----------- | --------- | ---------- |
+| CNAME       | www       | exaple.com |
+
+`CNAME` maps a subdomain to another domain name
+
+Now It might take a few minutes to propagate to all DNS servers. To check if `example.com` resolve to you host ip address. Check DNS Propagation by this online tool: [DNS Checker](https://dnschecker.org/)
