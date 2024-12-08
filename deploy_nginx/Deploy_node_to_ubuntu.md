@@ -1,6 +1,6 @@
 # How to Securely Deploy Node App to Ubuntu Server
 
-This is documentation about how you can deploy a node app to a server with nginx whether it is a `vps`, `vds`, `dedicated server` instance etc. This assumes your familiar with basic `linux` & `git ` commands. This will work for any node app that runs a server be it express app, next.js app, remix app etc. Another thing to note that we will deploy application code, database will be separated.
+This is documentation about how you can deploy a node app to a server with nginx whether it is a `vps`, `vds`, `dedicated server` This assumes your familiar with basic `linux` & `git ` commands. This will work for any node app that runs a server be it express app, next.js app, remix app etc. Another thing to note that we will deploy application code, database will be separated.
 
 ## Assumptions
 
@@ -13,8 +13,6 @@ This is documentation about how you can deploy a node app to a server with nginx
 7. Code is hosted on `GitHub`
 
 ## Workflow Steps
-
----
 
 ### 1. Secure Your Server
 
@@ -543,12 +541,21 @@ server {
 
     location / {
         proxy_pass http://localhost:8001;
-        proxy_http_version 1.1;
+
+		# Proxy Params - pass client request information to the proxied server
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        client_max_body_size 500M;
+
+		# If you need to upload file larger than 1M use below Directive
+        # client_max_body_size 500M;
+
+        # Web socket upgrade configuration
+        # Uncomment the following line if your using websocket in your app
+        # proxy_http_version 1.1;
+        # proxy_set_header Upgrade $http_upgrade;
+        # proxy_set_header Connection "upgrade";
     }
 
 	# Logging
@@ -605,9 +612,9 @@ sudo systemctl status certbot.timer
 
 Now, big congratulation you have successfully deployed your web app using nginx. If you want to optimize nginx, I recommend following this post: [Basic Nginx Setup](https://swissmade.host/en/blog/basic-nginx-setup-ubuntu-guide-to-a-functional-and-secure-website-serving)
 
-So this end the my documentation about how to deploy a node app with nginx. I will follow up with a documentation about how to automate the deployment with CI/CD pipeline in next Documentation.
+So this end of my documentation about **how to deploy a node app securely with nginx**. I will follow up with a documentation about how to automate the deployment with CI/CD pipeline in next Documentation.
 
-#### References
+#### References - For More Information
 
 1. [Server Setup & Hardening](https://docs.chaicode.com/server-setup/)
 2. [Server Hardening Best Practices](https://perception-point.io/guides/os-isolation/os-hardening-10-best-practices/)
