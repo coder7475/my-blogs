@@ -1,10 +1,10 @@
 # How to Securely Deploy Node App to Ubuntu Server
 
-This is documentation about how you can deploy a node app to a server with nginx whether it is a `vps`, `vds`, `dedicated server` This assumes your familiar with basic `linux` & `git ` commands. This will work for any node app that runs a server be it express app, next.js app, remix app etc. Another thing to note that we will deploy application code, database will be separated.
+This is documentation about how you can deploy a Node app to a server with Nginx, whether it is a `VPS`, `VDS`, or `dedicated server`. This assumes you're familiar with basic `Linux` & `git` commands. This will work for any Node app that runs a server, be it an Express app, Next.js app, Remix app, etc. Another thing to note is that we will deploy application code; the database will be separated.
 
 ## Assumptions
 
-1. A hosting with full root access and a domain
+1. A hosting service with full root access and a domain
 2. **OS**: Ubuntu 22.04
 3. **IPv4**: `172.172.172.172`
 4. **IPv6**: `2001:0db8:85a3:0000:0000:8a2e:0370:7334`
@@ -18,102 +18,102 @@ This is documentation about how you can deploy a node app to a server with nginx
 
 ---
 
-#### A. Login to your server
+#### A. Login to Your Server
 
-1. Open your terminal (bash, zsh etc)
+1. Open your terminal (bash, zsh, etc.)
 
 ```
 ssh root@172.172.172.172
 ```
 
-you will be prompted to give root password. After giving you will be logged into your server. See something like this:
+You will be prompted to provide the root password. After entering it, you will be logged into your server. You should see something like this:
 
 ```bash
 root@vm172048:~$
 ```
 
-If so you have Successfully logged in as root user.
+If so, you have successfully logged in as the root user.
 
 #### B. Server Hardening
 
-Now we are inside our machine and we can start installing the necessary packages and software but before that let’s upgrade our system. Enter below command in your terminal:
+Now that we are inside our machine, we can start installing the necessary packages and software, but before that, let's upgrade our system. Enter the command below in your terminal:
 
 ```bash
 apt update && apt upgrade -y
 ```
 
-Now, all the current packages are installed to latest patch version which keeps the system safe from "unpatched vulnerability exploitation"
+Now, all the current packages are updated to the latest patch version, which keeps the system safe from "unpatched vulnerability exploitation."
 
 #### C. Create Non-Root User
 
-Deploying as a root user is not recommended as it has full access to server all resources. So let's create a **not-root user** called `admin` and add it to to `sudo` group to use commands that need root previlieges.
+Deploying as a root user is not recommended, as it has full access to all server resources. So let's create a **non-root user** called `admin` and add it to the `sudo` group to use commands that need root privileges.
 
-For creating a `sudo` user:
+To create a `sudo` user:
 
 ```bash
 useradd -m -s /bin/bash admin
 ```
 
-This will create a new user with the name `admin` and you can check the groups of the user using the `groups` command.
+This will create a new user with the name `admin`, and you can check the groups of the user using the `groups` command.
 
 ```
 groups admin
 ```
 
-Let's add the `admin` user to `sudo` group:
+Let's add the `admin` user to the `sudo` group:
 
 ```bash
 usermod -aG sudo admin
 ```
 
-This will add the user to `sudo` group without removing from original `admin` group.
+This will add the user to the `sudo` group without removing them from the original `admin` group.
 
-Now lets **create a password** for the user:
+Now let's **create a password** for the user:
 
 ```bash
 sudo passwd admin
 ```
 
-you will be prompted to give new password and retype it.
+You will be prompted to enter a new password and retype it.
 
-So **check if password is set properly**, open a new terminal check it by typing:
+To **check if the password is set properly**, open a new terminal and check it by typing:
 
 ```
 ssh admin@172.172.172.172
 ```
 
-You will be prompted for your new password. After giving you will see something like:
+You will be prompted for your new password. After entering it, you should see something like:
 
 ```
 admin@vm172048:~$
 ```
 
-#### D. Connect to the server Using SSH
+#### D. Connect to the Server Using SSH
 
-Using **password to login is not recommended**. You want to use SSH (Secure Shell) and make sure that **SSH is the only way to log in**.
+Using **password login is not recommended**. You want to use SSH (Secure Shell) and make sure that **SSH is the only way to log in**.
 
-If you are a user of `git` chance is that you already have a `ssh key` setup. If you don't already have a `ssh key` use below command to generate a new ssh key in your **local machine:**
+If you are a user of `git`, chances are that you already have an `ssh key` set up. If you don't already have an `ssh key`, use the command below to generate a new SSH key on your **local machine**:
 
 ```bash
 ssh-keygen -t ed25519 -C "your_email@example.com"
 ```
 
-Follow the instructions, it should ask you where you want to save the file and if you want a passkey or not. Just click enter button for each prompt. Make sure you set a string one. To copy the public key over to your server run on your local machine:
+Follow the instructions; it should ask you where you want to save the file and if you want a passphrase or not. Just press the enter button for each prompt. Make sure you set a strong passphrase. To copy the public key over to your server, run the following command on your local machine:
 
 ```
 ssh-copy-id -i ~/.ssh/id_ed25519.pub admin@172.172.172.172
 ```
 
-Now, you should be able to login without a password. If it still does not work. Then use `cat ~/.ssh/id_ed25519.pub` then copy the copied key. Then paste it into **server's** `~/.ssh/authorized_keys`:
+Now, you should be able to log in without a password. If it still does not work, use `cat ~/.ssh/id_ed25519.pub` to copy the key. Then paste it into the server's `~/.ssh/authorized_keys`:
 
 ```bash
 touch ~/.ssh/authorized_keys
 sudo nano ~/.ssh/authorized_keys
 ```
 
-After all of this you should be able to log in without using password.
+After all of this, you should be able to log in without using a password.
 
-#### E. Disable root and password login In the Server
+#### E. Disable Root and Password Login on the Server
 
 To turn off username and password login, type in:
 
@@ -121,46 +121,46 @@ To turn off username and password login, type in:
 sudo nano /etc/ssh/sshd_config
 ```
 
-Find this value and set as in:
+Find these values and set them as follows:
 
 ```bash
-Port 1234 # Change the defaul port (use a number between 1024 and 65535)
+Port 1234 # Change the default port (use a number between 1024 and 65535)
 PermitRootLogin no # Disable root login
 PasswordAuthentication no # Disable password authentication
 PubkeyAuthentication yes # Enable public key authentication
 AuthorizedKeysFile .ssh/authorized_keys # Specify authorized_keys file location
-AllowUsers admin # Only allow specific users to login
+AllowUsers admin # Only allow specific users to log in
 ```
 
-This **disallows every login method besides SSH** under the user you copied your public key to. Stops login as Root and only allows the user you specify to log in. Hit CTL+S to save and CTL+X to get out of the file editor. Restart SSH:
+This **disallows every login method besides SSH** under the user you copied your public key to. It stops login as root and only allows the user you specify to log in. Hit `CTRL+S` to save and `CTRL+X` to exit the file editor. Restart SSH:
 
 ```bash
 sudo service ssh restart
 ```
 
-Now try login as root to see if disallows you. Since you changed default ssh key port 22 to 2222 Then you need to mention port when login.
+Now try logging in as root to see if it disallows you. Since you changed the default SSH port from 22 to 1234, you need to mention the port when logging in.
 
 ```
 ssh -p 1234 root@172.172.172.172
 ```
 
-This would disallow you as root login is disabled. To login use:
+This will disallow you since root login is disabled. To log in, use:
 
 ```
 ssh -p 1234 admin@172.172.172.172
 ```
 
-Also, it should go without saying, but **you need to keep the private key safe** and if you lose it **you will not be able to get in remotely anymore**.
+Also, it should go without saying, but **you need to keep the private key safe**, and if you lose it, **you will not be able to get in remotely anymore**.
 
-#### E. Firewall Configuration
+#### F. Firewall Configuration
 
-Ubuntu comes with `ufw` firewall by default. If not you can install by command:
+Ubuntu comes with the `ufw` firewall by default. If not, you can install it with the command:
 
 ```
-sudo apt install update && sudo apt install ufw -y
+sudo apt install ufw -y
 ```
 
-So see the current status of `ufw` enter:
+To see the current status of `ufw`, enter:
 
 ```
 sudo ufw status
@@ -172,32 +172,31 @@ This will show the current status of the firewall. To enable the firewall, run t
 sudo ufw enable
 ```
 
-First run some default policies with:
+First, run some default policies with:
 
 ```
 sudo ufw default deny incoming && sudo ufw allow outgoing
 ```
 
-Now since we change ssh port to `1234` allow it via firewall. Aside for them we will be using port 80 & port 443 for web serving via http & https so allow them too.
+Now, since we changed the SSH port to `1234`, allow it through the firewall. Aside from that, we will be using ports 80 and 443 for web serving via HTTP and HTTPS, so allow them too.
 
 ```
-sudo ufw allow 1234, 80, 443
+sudo ufw allow 1234,80,443
 ```
 
-To further improve brute force login via ssh use below command:
+To further improve brute force login via SSH, use the command below:
 
 ```
 sudo ufw limit 1234
 ```
 
-This would limit port 1234 to 6 connections in 30 seconds from a single IP.
-If you opened any port wrongly you can deny connection with:
+This will limit port 1234 to 6 connections in 30 seconds from a single IP. If you opened any port incorrectly, you can deny the connection with:
 
 ```
 sudo ufw deny <port_number>
 ```
 
-Now to see current status use:
+Now, to see the current status, use:
 
 ```
 sudo ufw status verbose
@@ -209,12 +208,11 @@ Restart the `ufw` to make sure all rules are applied:
 sudo ufw reload
 ```
 
-After enabling firewall **never** **exit from your remote server connection** without `enabling` rule for `ssh` connection. Otherwise **you won't be able to log into your own server**.
+After enabling the firewall, **never** **exit from your remote server connection** without enabling the rule for the `ssh` connection. Otherwise, **you won't be able to log into your own server**.
 
-#### F. Fail2Ban Configuration
+#### G. Fail2Ban Configuration
 
-Fail2Ban provides a protective shield for Ubuntu 22.04 that is specifically designed to block unauthorized access and brute-force attacks on essential services like [SSH and FTP](https://ultahost.com/blog/ssh-vs-ftp/).
-To install `fail2ban` use below command:
+Fail2Ban provides a protective shield for Ubuntu 22.04 that is specifically designed to block unauthorized access and brute-force attacks on essential services like [SSH and FTP](https://ultahost.com/blog/ssh-vs-ftp/). To install `fail2ban`, use the command below:
 
 ```
 sudo apt install fail2ban
@@ -226,7 +224,7 @@ After the installation is complete, start the Fail2ban service with:
 sudo systemctl start fail2ban
 ```
 
-To **enable Fail2ban on Ubuntu 22.04** so that it starts automatically when your system boots up, we can use:
+To **enable Fail2ban on Ubuntu 22.04** so that it starts automatically when your system boots up, use:
 
 ```
 sudo systemctl enable fail2ban
@@ -238,13 +236,13 @@ Next, we need to verify if Fail2ban is up and running without any issues using t
 sudo systemctl status fail2ban
 ```
 
-Now lets, configure fail2ban. The main configuration is located in /etc/fail2ban/jail.conf, but it's recommended to create a local configuration file:
+Now let's configure Fail2ban. The main configuration is located in `/etc/fail2ban/jail.conf`, but it's recommended to create a local configuration file:
 
 ```
 sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
 ```
 
-Now open the `jail.local` file, Tweak the values in Default section:
+Now open the `jail.local` file and tweak the values in the Default section:
 
 ```
 bantime = 10m
@@ -254,7 +252,7 @@ maxretry = 5
 
 Fail2Ban works by banning an IP for a specified **ban time** after detecting repeated failures within a defined **find time**. The **max retry** setting determines the number of failures allowed before an IP is banned.
 
-Now restart the fail2ban service:
+Now restart the Fail2ban service:
 
 ```
 sudo systemctl restart fail2ban
@@ -266,7 +264,7 @@ To see which service for which jail is activated, enter:
 sudo fail2ban-client status
 ```
 
-If you have come so far. Congratulations. You have secured your server. Now it's ready to deploy your `webApp`. Enter `exit` to end the session.
+If you have come this far, congratulations! You have secured your server. Now it's ready to deploy your `webApp`. Enter `exit` to end the session.
 
 ```
 exit
@@ -276,44 +274,44 @@ exit
 
 ---
 
-Our website will known by a domain name, in this case `example.com`. To make the domain name point to our server we need to some DNS configuration on the site of our domain provider.
+Our website will be known by a domain name, in this case, `example.com`. To make the domain name point to our server, we need to do some DNS configuration on the side of our domain provider.
 
-a. Login to your domain providers website
+a. Login to your domain provider's website.
 
-b Navigate to `example.com` and then Manage DNS Management
+b. Navigate to `example.com` and then manage DNS Management.
 
-c. Now Update `A` and `AAAA` record for IPv4 & IPv6 Address
+c. Now update the `A` and `AAAA` records for IPv4 & IPv6 Address.
 
 | Record Type | Host Name | Address                                 |
 | ----------- | --------- | --------------------------------------- |
 | A           | @         | 172.172.172.172                         |
 | AAAA        | @         | 2001:0db8:85a3:0000:0000:8a2e:0370:7334 |
 
-d. Next Update the `CNAME` Record to forward `www.example.com` to `example.com`
+d. Next, update the `CNAME` Record to forward `www.example.com` to `example.com`.
 
 | Record Type | Host Name | Address     |
 | ----------- | --------- | ----------- |
 | CNAME       | www       | example.com |
 
-`CNAME` maps a subdomain to another domain name
+`CNAME` maps a subdomain to another domain name.
 
-Now It might take a few minutes to propagate to all DNS servers. To check if `example.com` resolve to you host `ip address`. Check DNS Propagation by this online tool: [DNS Checker](https://dnschecker.org/)
+Now it might take a few minutes to propagate to all DNS servers. To check if `example.com` resolves to your host `IP address`, check DNS propagation using this online tool: [DNS Checker](https://dnschecker.org/).
 
 ### 3. Deploy the Web App
 
 ---
 
-To deploy, we will need to install several packages, first we will be using `git` to clone the repository from `github`. Since it's a node app we will need `node` installed in our system, I will be using node version 20. We will be using `npm` which comes with `node`. Finally to manage the app as background process, we will be using `pm2`.
+To deploy, we will need to install several packages. First, we will be using `git` to clone the repository from `GitHub`. Since it's a Node app, we will need `Node` installed on our system; I will be using Node version 20. We will be using `npm`, which comes with `Node`. Finally, to manage the app as a background process, we will be using `pm2`.
 
-First Login to your server using:
+First, log in to your server using:
 
 ```
 ssh -p 1234 admin@172.172.172.172
 ```
 
-#### A. Install all Necessary Dependencies
+#### A. Install All Necessary Dependencies
 
-1. First, To check the installation:
+1. First, check the installation:
 
 ```
 nginx -v
@@ -323,26 +321,26 @@ git --version
 pm2 --version
 ```
 
-2.  Then update to latest version & remove unnecessary packages:
+2. Then update to the latest version & remove unnecessary packages:
 
 ```
 sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
 ```
 
-4. Install latest version of `git` available:
+3. Install the latest version of `git` available:
 
 ```
 sudo apt install git -y
 ```
 
-5. Install `node` version 20 & its accompanying `npm` (Node Package Manager):
+4. Install `Node` version 20 & its accompanying `npm` (Node Package Manager):
 
 ```
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash -
 sudo apt-get install -y nodejs
 ```
 
-6. Install `nginx` web server:
+5. Install the `nginx` web server:
 
 ```
 sudo apt install -y nginx
@@ -350,51 +348,55 @@ sudo apt install -y nginx
 
 #### B. Clone the Code Repo from GitHub
 
-Our code repo will be hosted on `github`. We will be cloning the repo to our server using deploy key.
+Our code repo will be hosted on `GitHub`. We will be cloning the repo to our server using a deploy key.
 
-1. First generate a deploy key name `site0`:
+1. First, generate a deploy key named `site0`:
 
 ```
 ssh-keygen -t ed25519 -C "fahad@octopusx.io" -f ~/.ssh/example
 ```
 
-You will be prompted for passkey just click enter. This will generate a public-private key pair called `example.pub` & `example` in your `~/.ssh` folder 2. Make sure the `~/.ssh` folder is owned by `admin`
+You will be prompted for a passphrase; just press enter. This will generate a public-private key pair called `example.pub` & `example` in your `~/.ssh` folder.
+
+2. Make sure the `~/.ssh` folder is owned by `admin`:
 
 ```
-sudo chown -R admin .ssh
+sudo chown -R admin ~/.ssh
 ```
 
-3. Add GitHub's SSH server public key to server's `known_host` file:
+3. Add GitHub's SSH server public key to the server's `known_hosts` file:
 
 ```
 ssh-keyscan -t ed25519 github.com >> ~/.ssh/known_hosts
 ```
 
-5. Next Copy the SSH Public key after outputting the key to terminal:
+4. Next, copy the SSH Public key after outputting the key to the terminal:
 
 ```
 cat ~/.ssh/example.pub
 ```
 
-6. Use the copied key as deploy key in GitHub:
-   - Go to Your Github Repo
-   - Click on Settings Tab
-   - Click on Deploy Keys option from sidebar
-   - Click on Add Deploy Key Button and Paste Copied SSH Public Key with a name of your choice
+5. Use the copied key as a deploy key in GitHub:
+
+   - Go to your GitHub Repo
+   - Click on the Settings Tab
+   - Click on Deploy Keys option from the sidebar
+   - Click on the Add Deploy Key Button and paste the copied SSH Public Key with a name of your choice
    - Click on Add Key
-7. Clone Project from your github Repo to your server's home using:
+
+6. Clone the project from your GitHub Repo to your server's home using:
 
 ```
 git clone git@github.com:admin7374/example_app.git
 ```
 
-here, `admin7374` is the github username and `example_app` is the node app we are about to deploy. This will clone the code repo in server.
+Here, `admin7374` is the GitHub username and `example_app` is the Node app we are about to deploy. This will clone the code repo on the server.
 
 #### C. Run the App with pm2
 
-Now it's time to build and run the node app in the background:
+Now it's time to build and run the Node app in the background:
 
-1. Navigate to project folder
+1. Navigate to the project folder:
 
 ```
 cd ~/example_app
@@ -412,14 +414,16 @@ touch .env
 sudo nano .env
 ```
 
-example `.env` file:
+Example `.env` file:
 
 ```
 PORT = 8001
 DATABASE_URL = "database_url"
 ```
 
-After pasting click `ctrl + s` and `ctrl + x` to save and exit. 4. Create a `ecosystem.config.cjs` in your repo code (best created inside github repo):
+After pasting, click `CTRL + S` and `CTRL + X` to save and exit.
+
+4. Create an `ecosystem.config.cjs` file in your repo code (best created inside the GitHub repo):
 
 ```
 touch ecosystem.config.cjs
@@ -434,43 +438,51 @@ module.exports = {
       {
         name: "example_app",
         script: "npm start",
-        port: 8001
+        port: 8001 // optional, if have port set in app
       }
   ]
 }
 ```
 
-Above code will run the node app at port `8001` make sure it matches your port defined in application. The `script` is usually how the node app generally runs. It assumes there is `npm start` script inside your `package.json` the run the build code. 5. Next install necessary node module using:
+The above code will run the Node app at port `8001`; make sure it matches the port defined in the application. The `script` is usually how the Node app generally runs. It assumes there is an `npm start` script inside your `package.json` to run the build code.
+
+5. Next, install the necessary Node modules using:
 
 ```
 npm ci
 ```
 
-above command create a `node_modules` folder with all necessary packages to run the code. 7. Now, lets build the code, type:
+The above command creates a `node_modules` folder with all necessary packages to run the code.
+
+6. Now, let's build the code. Type:
 
 ```
 npm run build
 ```
 
-Above script will build the code for distribution using the `build` script defined in `pacakge.json` 7. Add PM2 Process on Startup:
+The above script will build the code for distribution using the `build` script defined in `package.json`.
+
+7. Add PM2 Process on Startup:
 
 ```
 sudo pm2 startup
 ```
 
-8. Start the Node App using `pm2`
+8. Start the Node App using `pm2`:
 
 ```
 pm2 start ecosystem.config.cjs
 ```
 
-9. Save PM2 Process
+9. Save the PM2 Process:
 
 ```
 pm2 save
 ```
 
-This will save the process to keep running in the background. 10. List all pm2 process running in the background:
+This will save the process to keep running in the background.
+
+10. List all PM2 processes running in the background:
 
 ```
 pm2 list
@@ -482,25 +494,27 @@ pm2 list
 pm2 reload example_app
 ```
 
-12. To check the pm2 process logs use:
+12. To check the PM2 process logs, use:
 
 ```
 pm2 monit
 ```
 
-This will open a interactive terminal which will show you logs and metadata for each process. Enter `q` to quit. 13. Check if the apps working properly using:
+This will open an interactive terminal that will show you logs and metadata for each process. Enter `q` to quit.
+
+13. Check if the app is working properly using:
 
 ```
 curl localhost:8001
 ```
 
-This will output properly if the app is working.
+This should output properly if the app is working.
 
 #### D. Serve the App with NGINX
 
-Now it's time to finally serve the app to using nginx. Nginx is a powerful web server, reverse proxy and load balancer. In This case we will using the `nginx` reverse proxy feature to server the app running on `localhost:8001` to internet.
+Now it's time to finally serve the app using Nginx. Nginx is a powerful web server, reverse proxy, and load balancer. In this case, we will use the `nginx` reverse proxy feature to serve the app running on `localhost:8001` to the internet.
 
-1. Start and Enable `nginx`
+1. Start and enable `nginx`:
 
 ```
 sudo systemctl start nginx
@@ -513,19 +527,23 @@ sudo systemctl enable nginx
 sudo systemctl status nginx
 ```
 
-If everything went well, the output should indicate that the Nginx service is `active (running)`. 3. If you wish to confirm Nginx's operation via a `web browser`, then in navigate to:
+If everything went well, the output should indicate that the Nginx service is `active (running)`.
+
+3. If you wish to confirm Nginx's operation via a web browser, navigate to:
 
 ```
 http://example.com
 ```
 
-This will show default `nginx` page. 4. If it's not showing, the `ufw` firewall is blocking port `80` and port `443`. To allow through `ufw` firewall use:
+This should show the default `nginx` page.
+
+4. If it's not showing, the `ufw` firewall may be blocking ports `80` and `443`. To allow them through the `ufw` firewall, use:
 
 ```
 sudo ufw allow 'Nginx Full'
 ```
 
-5.  Nginx, like many server software, relies on configuration files to dictate its behavior. Begin by creating a configuration file for your website
+5. Nginx, like many server software, relies on configuration files to dictate its behavior. Begin by creating a configuration file for your website:
 
 ```
 sudo nano /etc/nginx/sites-available/example.com
@@ -548,11 +566,11 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
 
-		# If you need to upload file larger than 1M use below Directive
+		# If you need to upload files larger than 1M, use the below directive
         # client_max_body_size 500M;
 
         # Web socket upgrade configuration
-        # Uncomment the following line if your using websocket in your app
+        # Uncomment the following lines if you're using websockets in your app
         # proxy_http_version 1.1;
         # proxy_set_header Upgrade $http_upgrade;
         # proxy_set_header Connection "upgrade";
@@ -564,19 +582,25 @@ server {
 }
 ```
 
-The proxy pass configuration serves files directly, it proxies requests to a local application (in this case, running on port 8001). 7. With the configuration file created, it isn't live yet. To activate it, you'll create a symbolic link to the `sites-enabled` directory:
+The proxy pass configuration serves files directly; it proxies requests to a local application (in this case, running on port 8001).
+
+7. With the configuration file created, it isn't live yet. To activate it, you'll create a symbolic link to the `sites-enabled` directory:
 
 ```
-sudo ln -s /etc/nginx/sites-available/mywebsite /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/example.com /etc/nginx/sites-enabled/example.com
 ```
 
-Think of this step as "publishing" your configuration, making it live and ready to handle traffic. 8. Test the configuration before going live:
+Think of this step as "publishing" your configuration, making it live and ready to handle traffic.
+
+8. Test the configuration before going live:
 
 ```
 sudo nginx -t
 ```
 
-Nginx will then parse your configurations and return feedback. A successful message indicates that your configurations are error-free. 9. Time to go live. This require a reload:
+Nginx will then parse your configurations and return feedback. A successful message indicates that your configurations are error-free.
+
+9. Time to go live. This requires a reload:
 
 ```
 sudo systemctl reload nginx
@@ -588,7 +612,7 @@ sudo systemctl reload nginx
 http://example.com
 ```
 
-11. Our current website configuration serves content over HTTP on port 80, which is unencrypted. Let's encrypt it via [Let's Encrypt](https://letsencrypt.org/). First install certbot:
+11. Our current website configuration serves content over HTTP on port 80, which is unencrypted. Let's encrypt it via [Let's Encrypt](https://letsencrypt.org/). First, install certbot:
 
 ```
 sudo apt update
@@ -598,33 +622,35 @@ sudo apt update
 sudo apt install certbot python3-certbot-nginx
 ```
 
-13. Generate SSL Certificates using certbot:
+12. Generate SSL Certificates using certbot:
 
 ```
 sudo certbot --nginx -d example.com -d www.example.com
 ```
 
-Just follow the instruction in the prompts. You website will be encrypted with proper ssl/tls encryption certificate. Check your website on browser to see if it's install. 14. Nowadays certbot when getting a new cert will set up auto-renew for you, so it's a sit-and-forget kinda task. But to make sure it worked you can run:
+Just follow the instructions in the prompts. Your website will be encrypted with a proper SSL/TLS encryption certificate. Check your website in the browser to see if it's installed.
+
+13. Nowadays, certbot, when getting a new cert, will set up auto-renew for you, so it's a sit-and-forget kind of task. But to make sure it worked, you can run:
 
 ```
 sudo systemctl status certbot.timer
 ```
 
-Now, big congratulation you have successfully deployed your web app using nginx. If you want to optimize nginx, I recommend following this post: [Basic Nginx Setup](https://swissmade.host/en/blog/basic-nginx-setup-ubuntu-guide-to-a-functional-and-secure-website-serving)
+Now, big congratulations! You have successfully deployed your web app using Nginx. If you want to optimize Nginx, I recommend following this post: [Basic Nginx Setup](https://swissmade.host/en/blog/basic-nginx-setup-ubuntu-guide-to-a-functional-and-secure-website-serving).
 
-So this end of my documentation about **how to deploy a node app securely with nginx**. I will follow up with a documentation about how to automate the deployment with CI/CD pipeline in next Documentation.
+This concludes my documentation on **how to deploy a Node app securely with Nginx**. I will follow up with documentation on how to automate the deployment with a CI/CD pipeline in the next documentation.
 
 #### References - For More Information
 
 1. [Server Setup & Hardening](https://docs.chaicode.com/server-setup/)
 2. [Server Hardening Best Practices](https://perception-point.io/guides/os-isolation/os-hardening-10-best-practices/)
-3. [Server Setup Basices](https://becomesovran.com/blog/server-setup-basics.html?ref=dailydev)
+3. [Server Setup Basics](https://becomesovran.com/blog/server-setup-basics.html?ref=dailydev)
 4. [Install fail2ban](https://ultahost.com/knowledge-base/install-fail2ban-ubuntu/)
-5. [fail2ban ubuntu configs](https://www.digitalocean.com/community/tutorials/how-to-protect-ssh-with-fail2ban-on-ubuntu-20-04)
+5. [Fail2ban Ubuntu Configs](https://www.digitalocean.com/community/tutorials/how-to-protect-ssh-with-fail2ban-on-ubuntu-20-04)
 6. [Deploy Node.js to VPS](https://github.com/coder7475/GeekyShowsNotes/blob/main/nginx/Deploy_NodeExpress_Nginx.md)
 7. [Nginx Configs](https://swissmade.host/en/blog/basic-nginx-setup-ubuntu-guide-to-a-functional-and-secure-website-serving)
-8. [How to change default ssh port](https://dev.to/coder7475/how-to-change-default-ssh-port-in-ubuntu-server-3aab)
+8. [How to Change Default SSH Port](https://dev.to/coder7475/how-to-change-default-ssh-port-in-ubuntu-server-3aab)
 9. [Uncomplicated Firewall](https://dev.to/coder7475/uncomplicated-firewall-ufw-1638)
 10. [DNS Cheatsheet](https://dev.to/chrisachard/dns-record-crash-course-for-web-developers-35hn?ref=dailydev)
-11. [scp](https://www.linode.com/docs/guides/how-to-use-scp/)
-12. [pm2 guide](https://betterstack.com/community/guides/scaling-nodejs/pm2-guide/)
+11. [SCP](https://www.linode.com/docs/guides/how-to-use-scp/)
+12. [PM2 Guide](https://betterstack.com/community/guides/scaling-nodejs/pm2-guide/)
