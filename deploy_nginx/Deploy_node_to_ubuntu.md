@@ -1,6 +1,6 @@
 # How to Securely Deploy Node App to Ubuntu Server
 
-This is documentation about how you can deploy a Node app to a server with Nginx, whether it is a `VPS`, `VDS`, or `dedicated server`. This assumes you're familiar with basic `Linux` & `git` commands. This will work for any Node app that runs a server, be it an Express app, Next.js app, Remix app, etc. Another thing to note is that we will deploy application code; the database will be separated.
+This is documentation about how you can deploy a Node app to a server with Nginx, whether it is a `VPS`, `VDS`, or `dedicated server`. This assumes you're familiar with basic `Linux` & `git` commands. This will work for any Node app that runs a server, be it an `Express` app, `Next.js` app, `Remix` app, etc. Another thing to note is that we will deploy application code; the database will be separated.
 
 ## Assumptions
 
