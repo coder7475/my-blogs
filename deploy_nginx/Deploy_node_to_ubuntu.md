@@ -638,7 +638,7 @@ sudo systemctl status certbot.timer
 
 Now, big congratulations! You have successfully deployed your web app using Nginx. If you want to optimize Nginx, I recommend following this post: [Basic Nginx Setup](https://swissmade.host/en/blog/basic-nginx-setup-ubuntu-guide-to-a-functional-and-secure-website-serving).
 
-This concludes my documentation on **how to deploy a Node app securely with Nginx**. I will follow up with documentation on how to automate the deployment with a CI/CD pipeline in the next documentation.
+This concludes my documentation on **how to deploy a Node app securely with Nginx**.
 
 #### References - For More Information
 
