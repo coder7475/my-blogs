@@ -2,8 +2,6 @@
 
 Moving a branch from one repository to another can be a common task when reorganizing projects or migrating code. In this guide, we will walk you through the steps to clone a specific branch and create a new repository from it.
 
-For more detailed information, you can refer to this [FreeCodeCamp article](https://www.freecodecamp.org/news/git-clone-branch-how-to-clone-a-specific-branch/).
-
 ## Steps to Clone a Specific Branch and Create a New Repository
 
 ### Step 1: Clone a Specific Branch
@@ -13,6 +11,8 @@ To start, you need to clone the specific branch you want to move. Use the follow
 ```
 git clone --branch <branchname> <remote-repo-url>
 ```
+
+For more detailed information, you can refer to this [FreeCodeCamp article](https://www.freecodecamp.org/news/git-clone-branch-how-to-clone-a-specific-branch/).
 
 ### Step 2: Remove the `.git` Folder
 
