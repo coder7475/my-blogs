@@ -1,6 +1,6 @@
 # How to Securely Deploy Node App to Ubuntu Server
 
-This is documentation about how you can deploy a Node app to a server with Nginx, whether it is a `VPS`, `VDS`, or `dedicated server`. This assumes you're familiar with basic `Linux` & `git` commands. This will work for any Node app that runs a server, be it an Express app, Next.js app, Remix app, etc. Another thing to note is that we will deploy application code; the database will be separated.
+This is documentation about how you can deploy a Node app to a server with Nginx, whether it is a `VPS`, `VDS`, or `dedicated server`. This assumes you're familiar with basic `Linux` & `git` commands. This will work for any Node app that runs a server, be it an `Express` app, `Next.js` app, `Remix` app, etc. Another thing to note is that we will deploy application code; the database will be separated.
 
 ## Assumptions
 
@@ -638,7 +638,7 @@ sudo systemctl status certbot.timer
 
 Now, big congratulations! You have successfully deployed your web app using Nginx. If you want to optimize Nginx, I recommend following this post: [Basic Nginx Setup](https://swissmade.host/en/blog/basic-nginx-setup-ubuntu-guide-to-a-functional-and-secure-website-serving).
 
-This concludes my documentation on **how to deploy a Node app securely with Nginx**. I will follow up with documentation on how to automate the deployment with a CI/CD pipeline in the next documentation.
+This concludes my documentation on **how to deploy a Node app securely with Nginx**.
 
 #### References - For More Information
 
