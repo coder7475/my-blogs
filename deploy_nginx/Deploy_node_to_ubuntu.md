@@ -1,6 +1,6 @@
 # How to Securely Deploy Node App to Ubuntu Server
 
-This is documentation about how you can deploy a Node app to a server with Nginx, whether it is a `VPS`, `VDS`, or `dedicated server`. This assumes you're familiar with basic `Linux` & `git` commands. This will work for any Node app that runs a server, be it an `Express` app, `Next.js` app, `Remix` app, etc. Another thing to note is that we will deploy application code; the database will be separated.
+This is blog about how you can deploy a Node app to a server with Nginx, whether it is a `VPS`, `VDS`, or `dedicated server`. This assumes you're familiar with basic `Linux` & `git` commands. This will work for any Node app that runs a server, be it an `Express` app, `Next.js` app, `Remix` app, etc. Another thing to note is that we will deploy application code; the database will be separated.
 
 ## Assumptions
 
@@ -311,7 +311,7 @@ ssh -p 1234 admin@172.172.172.172
 
 #### A. Install All Necessary Dependencies
 
-1. First, check the installation:
+a. First, check the installation:
 
 ```
 nginx -v
@@ -321,26 +321,26 @@ git --version
 pm2 --version
 ```
 
-2. Then update to the latest version & remove unnecessary packages:
+b. Then update to the latest version & remove unnecessary packages:
 
 ```
 sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
 ```
 
-3. Install the latest version of `git` available:
+c. Install the latest version of `git` available:
 
 ```
 sudo apt install git -y
 ```
 
-4. Install `Node` version 20 & its accompanying `npm` (Node Package Manager):
+d. Install `Node` version 20 & its accompanying `npm` (Node Package Manager):
 
 ```
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash -
 sudo apt-get install -y nodejs
 ```
 
-5. Install the `nginx` web server:
+e. Install the `nginx` web server:
 
 ```
 sudo apt install -y nginx
@@ -350,7 +350,7 @@ sudo apt install -y nginx
 
 Our code repo will be hosted on `GitHub`. We will be cloning the repo to our server using a deploy key.
 
-1. First, generate a deploy key named `site0`:
+a. First, generate a deploy key named `site0`:
 
 ```
 ssh-keygen -t ed25519 -C "fahad@octopusx.io" -f ~/.ssh/example
@@ -358,33 +358,33 @@ ssh-keygen -t ed25519 -C "fahad@octopusx.io" -f ~/.ssh/example
 
 You will be prompted for a passphrase; just press enter. This will generate a public-private key pair called `example.pub` & `example` in your `~/.ssh` folder.
 
-2. Make sure the `~/.ssh` folder is owned by `admin`:
+b. Make sure the `~/.ssh` folder is owned by `admin`:
 
 ```
 sudo chown -R admin ~/.ssh
 ```
 
-3. Add GitHub's SSH server public key to the server's `known_hosts` file:
+c. Add GitHub's SSH server public key to the server's `known_hosts` file:
 
 ```
 ssh-keyscan -t ed25519 github.com >> ~/.ssh/known_hosts
 ```
 
-4. Next, copy the SSH Public key after outputting the key to the terminal:
+d. Next, copy the SSH Public key after outputting the key to the terminal:
 
 ```
 cat ~/.ssh/example.pub
 ```
 
-5. Use the copied key as a deploy key in GitHub:
+e. Use the copied key as a deploy key in GitHub:
 
-   - Go to your GitHub Repo
-   - Click on the Settings Tab
-   - Click on Deploy Keys option from the sidebar
-   - Click on the Add Deploy Key Button and paste the copied SSH Public Key with a name of your choice
-   - Click on Add Key
+- Go to your GitHub Repo
+- Click on the Settings Tab
+- Click on Deploy Keys option from the sidebar
+- Click on the Add Deploy Key Button and paste the copied SSH Public Key with a name of your choice
+- Click on Add Key
 
-6. Clone the project from your GitHub Repo to your server's home using:
+f. Clone the project from your GitHub Repo to your server's home using:
 
 ```
 git clone git@github.com:admin7374/example_app.git
@@ -396,19 +396,19 @@ Here, `admin7374` is the GitHub username and `example_app` is the Node app we ar
 
 Now it's time to build and run the Node app in the background:
 
-1. Navigate to the project folder:
+a. Navigate to the project folder:
 
 ```
 cd ~/example_app
 ```
 
-2. Create a `.env` file:
+b. Create a `.env` file:
 
 ```
 touch .env
 ```
 
-3. Open the `.env` file and paste your environmental variables:
+c. Open the `.env` file and paste your environmental variables:
 
 ```
 sudo nano .env
@@ -423,7 +423,7 @@ DATABASE_URL = "database_url"
 
 After pasting, click `CTRL + S` and `CTRL + X` to save and exit.
 
-4. Create an `ecosystem.config.cjs` file in your repo code (best created inside the GitHub repo):
+d. Create an `ecosystem.config.cjs` file in your repo code (best created inside the GitHub repo):
 
 ```
 touch ecosystem.config.cjs
@@ -446,7 +446,7 @@ module.exports = {
 
 The above code will run the Node app at port `8001`; make sure it matches the port defined in the application. The `script` is usually how the Node app generally runs. It assumes there is an `npm start` script inside your `package.json` to run the build code.
 
-5. Next, install the necessary Node modules using:
+e. Next, install the necessary Node modules using:
 
 ```
 npm ci
@@ -454,7 +454,7 @@ npm ci
 
 The above command creates a `node_modules` folder with all necessary packages to run the code.
 
-6. Now, let's build the code. Type:
+f. Now, let's build the code. Type:
 
 ```
 npm run build
@@ -462,19 +462,19 @@ npm run build
 
 The above script will build the code for distribution using the `build` script defined in `package.json`.
 
-7. Add PM2 Process on Startup:
+g. Add PM2 Process on Startup:
 
 ```
 sudo pm2 startup
 ```
 
-8. Start the Node App using `pm2`:
+h. Start the Node App using `pm2`:
 
 ```
 pm2 start ecosystem.config.cjs
 ```
 
-9. Save the PM2 Process:
+i. Save the PM2 Process:
 
 ```
 pm2 save
@@ -482,19 +482,19 @@ pm2 save
 
 This will save the process to keep running in the background.
 
-10. List all PM2 processes running in the background:
+j. List all PM2 processes running in the background:
 
 ```
 pm2 list
 ```
 
-11. If you need to reload for redeployment, use:
+k. If you need to reload for redeployment, use:
 
 ```
 pm2 reload example_app
 ```
 
-12. To check the PM2 process logs, use:
+l. To check the PM2 process logs, use:
 
 ```
 pm2 monit
@@ -502,7 +502,7 @@ pm2 monit
 
 This will open an interactive terminal that will show you logs and metadata for each process. Enter `q` to quit.
 
-13. Check if the app is working properly using:
+m. Check if the app is working properly using:
 
 ```
 curl localhost:8001
@@ -514,14 +514,14 @@ This should output properly if the app is working.
 
 Now it's time to finally serve the app using Nginx. Nginx is a powerful web server, reverse proxy, and load balancer. In this case, we will use the `nginx` reverse proxy feature to serve the app running on `localhost:8001` to the internet.
 
-1. Start and enable `nginx`:
+a. Start and enable `nginx`:
 
 ```
 sudo systemctl start nginx
 sudo systemctl enable nginx
 ```
 
-2. Verify `nginx` is up and running:
+b. Verify `nginx` is up and running:
 
 ```
 sudo systemctl status nginx
@@ -529,7 +529,7 @@ sudo systemctl status nginx
 
 If everything went well, the output should indicate that the Nginx service is `active (running)`.
 
-3. If you wish to confirm Nginx's operation via a web browser, navigate to:
+c. If you wish to confirm Nginx's operation via a web browser, navigate to:
 
 ```
 http://example.com
@@ -537,19 +537,19 @@ http://example.com
 
 This should show the default `nginx` page.
 
-4. If it's not showing, the `ufw` firewall may be blocking ports `80` and `443`. To allow them through the `ufw` firewall, use:
+d. If it's not showing, the `ufw` firewall may be blocking ports `80` and `443`. To allow them through the `ufw` firewall, use:
 
 ```
 sudo ufw allow 'Nginx Full'
 ```
 
-5. Nginx, like many server software, relies on configuration files to dictate its behavior. Begin by creating a configuration file for your website:
+e. Nginx, like many server software, relies on configuration files to dictate its behavior. Begin by creating a configuration file for your website:
 
 ```
 sudo nano /etc/nginx/sites-available/example.com
 ```
 
-6. Inside this file, input the following proxy pass configuration:
+f. Inside this file, input the following proxy pass configuration:
 
 ```
 server {
@@ -584,7 +584,7 @@ server {
 
 The proxy pass configuration serves files directly; it proxies requests to a local application (in this case, running on port 8001).
 
-7. With the configuration file created, it isn't live yet. To activate it, you'll create a symbolic link to the `sites-enabled` directory:
+g. With the configuration file created, it isn't live yet. To activate it, you'll create a symbolic link to the `sites-enabled` directory:
 
 ```
 sudo ln -s /etc/nginx/sites-available/example.com /etc/nginx/sites-enabled/example.com
@@ -592,7 +592,7 @@ sudo ln -s /etc/nginx/sites-available/example.com /etc/nginx/sites-enabled/examp
 
 Think of this step as "publishing" your configuration, making it live and ready to handle traffic.
 
-8. Test the configuration before going live:
+h. Test the configuration before going live:
 
 ```
 sudo nginx -t
@@ -600,19 +600,19 @@ sudo nginx -t
 
 Nginx will then parse your configurations and return feedback. A successful message indicates that your configurations are error-free.
 
-9. Time to go live. This requires a reload:
+i. Time to go live. This requires a reload:
 
 ```
 sudo systemctl reload nginx
 ```
 
-10. Now check in the web browser, go to:
+j. Now check in the web browser, go to:
 
 ```
 http://example.com
 ```
 
-11. Our current website configuration serves content over HTTP on port 80, which is unencrypted. Let's encrypt it via [Let's Encrypt](https://letsencrypt.org/). First, install certbot:
+k. Our current website configuration serves content over HTTP on port 80, which is unencrypted. Let's encrypt it via [Let's Encrypt](https://letsencrypt.org/). First, install certbot:
 
 ```
 sudo apt update
@@ -622,7 +622,7 @@ sudo apt update
 sudo apt install certbot python3-certbot-nginx
 ```
 
-12. Generate SSL Certificates using certbot:
+l. Generate SSL Certificates using certbot:
 
 ```
 sudo certbot --nginx -d example.com -d www.example.com
