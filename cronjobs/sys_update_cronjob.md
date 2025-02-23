@@ -7,6 +7,10 @@ Keeping your server up to date is crucial for security and performance. One effe
 A cron job is a scheduled task in Unix-like operating systems that allows you to run scripts or commands at specified intervals. This is particularly useful for routine maintenance tasks, such as system updates.
 
 ## Setting Up a System Update Cron Job
+### Assumption
+
+**OS**: Ubuntu
+**linux username**: admin
 
 ### Step 1: Create the Cron Job
 Open the crontab with:
