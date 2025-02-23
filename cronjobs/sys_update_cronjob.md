@@ -87,8 +87,6 @@ sudo touch /var/log/system_update.log
 sudo chown admin:admin /var/log/system_update.log
 ```
 
-change the `admin` with your actual username of linux system.
-
 ### Step 4: Configure Sudo Privileges
 
 For the cron job to run without prompting for a password, you need to configure sudo privileges. Open the sudoers file using `visudo` and add the following line:
@@ -97,14 +95,8 @@ For the cron job to run without prompting for a password, you need to configure 
 admin ALL=(ALL) NOPASSWD: /usr/bin/apt update, /usr/bin/apt upgrade -y, /usr/bin/apt autoremove -y
 ```
 
-**Note**: Replace `admin` with your actual username if it differs.
-
 ## Conclusion
 
 By following these steps, you can automate your system updates, ensuring that your server remains secure and up to date without manual intervention. Regular updates are essential for maintaining the health of your system, and using cron jobs is a simple yet effective way to achieve this.
 
 Happy scripting!
-
----
-
-Feel free to modify any sections to better fit your style or audience!
