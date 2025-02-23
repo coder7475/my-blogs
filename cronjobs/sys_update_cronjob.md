@@ -12,7 +12,7 @@ A cron job is a scheduled task in Unix-like operating systems that allows you to
 Open the crontab with:
 ```bash
 crontab -e
-\```
+```
 To set up a system update cron job, you need to add the following line to your crontab:
 ```bash
 0 1 * * * sudo /home/admin/scripts/system_update.sh >> /var/log/system_update.log 2>&1
