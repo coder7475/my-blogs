@@ -17,3 +17,5 @@ This repository to track all my blogs
 6. [Security Features in Nginx](https://github.com/coder7475/my-blogs/blob/main/nginx/security_nginx.md)
 
 7. [How To Troubleshoot Common Nginx Errors](https://github.com/coder7475/my-blogs/blob/main/nginx/troublesoot_common_nginx_error.md)
+
+8. [How to setup system monitoring with Prometheus and Grafana](https://github.com/coder7475/my-blogs/blob/main/monitoring/system_monitoring.md)
