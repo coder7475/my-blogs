@@ -5,7 +5,7 @@ What to do after getting a server vps first time:
 1. Check OS, Kernel, Hardware Architecture, Uptime
 
 ```bash
-    cat /etc/ubuntu-advantage/uclient.conf
+    cat /etc/ubuntu-advantage/uaclient.conf
     uname -a
     hostnamectl
     uptime
